@@ -1,0 +1,1105 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Manufacturing Master Plan Checklist</title>
+  <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/js-yaml/4.1.0/js-yaml.min.js"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            border: {
+              DEFAULT: 'hsl(214.3 31.8% 91.4%)',
+              dark: 'hsl(217.2 32.6% 17.5%)'
+            },
+            input: {
+              DEFAULT: 'hsl(214.3 31.8% 91.4%)',
+              dark: 'hsl(217.2 32.6% 17.5%)'
+            },
+            ring: {
+              DEFAULT: 'hsl(222.2 84% 4.9%)',
+              dark: 'hsl(212.7 26.8% 83.9%)'
+            },
+            background: {
+              DEFAULT: 'hsl(0 0% 100%)',
+              dark: 'hsl(222.2 84% 4.9%)'
+            },
+            foreground: {
+              DEFAULT: 'hsl(222.2 84% 4.9%)',
+              dark: 'hsl(210 40% 98%)'
+            },
+            primary: {
+              DEFAULT: 'hsl(222.2 47.4% 11.2%)',
+              foreground: 'hsl(210 40% 98%)',
+              dark: 'hsl(210 40% 98%)',
+              'dark-foreground': 'hsl(222.2 84% 4.9%)'
+            },
+            secondary: {
+              DEFAULT: 'hsl(210 40% 96%)',
+              foreground: 'hsl(222.2 84% 4.9%)',
+              dark: 'hsl(217.2 32.6% 17.5%)',
+              'dark-foreground': 'hsl(210 40% 98%)'
+            },
+            muted: {
+              DEFAULT: 'hsl(210 40% 96%)',
+              foreground: 'hsl(215.4 16.3% 46.9%)',
+              dark: 'hsl(217.2 32.6% 17.5%)',
+              'dark-foreground': 'hsl(215 20.2% 65.1%)'
+            },
+            accent: {
+              DEFAULT: 'hsl(210 40% 96%)',
+              foreground: 'hsl(222.2 84% 4.9%)',
+              dark: 'hsl(217.2 32.6% 17.5%)',
+              'dark-foreground': 'hsl(210 40% 98%)'
+            },
+            card: {
+              DEFAULT: 'hsl(0 0% 100%)',
+              foreground: 'hsl(222.2 84% 4.9%)',
+              dark: 'hsl(222.2 84% 4.9%)',
+              'dark-foreground': 'hsl(210 40% 98%)'
+            },
+          },
+        }
+      }
+    }
+  </script>
+</head>
+
+<body class="bg-background-dark text-foreground-dark">
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const {useState, useEffect, useRef} = React;
+
+    // Manufacturing Master Plan Data Structure
+    const defaultMasterPlan = {
+      title: "Electronic Product Manufacturing Master Plan",
+      phases: [
+        {
+          id: "phase1",
+          title: "Phase 1: Design for Manufacturing (DFM) and Design for Assembly (DFA)",
+          description: "Optimize your functional prototype for mass production",
+          tasks: [
+            {
+              id: "phase1-task1",
+              title: "Review and Refine the Schematics",
+              description: "Component selection, availability, cost-effectiveness, and second-source components for supply chain risk mitigation",
+              timeEstimate: "1-2 weeks",
+              scheduleDate: "",
+              completedDate: "",
+              assignee: "",
+              sopDocument: "",
+              tags: ["schematics", "components", "supply-chain"],
+              status: "pending",
+              dependsOn: []
+            },
+            {
+              id: "phase1-task2",
+              title: "Optimize the PCB Layout",
+              description: "Ensure component footprints, trace widths, clearances, layer stack-up, test points, and fiducials are optimized for manufacturing",
+              timeEstimate: "2-3 weeks",
+              scheduleDate: "",
+              completedDate: "",
+              assignee: "",
+              sopDocument: "",
+              tags: ["pcb", "layout", "manufacturing"],
+              status: "pending",
+              dependsOn: ["phase1-task1"]
+            },
+            {
+              id: "phase1-task3",
+              title: "Mechanical Design Optimization",
+              description: "Refine enclosure for injection molding, add draft angles, ribs, bosses, choose standard fasteners and connectors",
+              timeEstimate: "2-4 weeks",
+              scheduleDate: "",
+              completedDate: "",
+              assignee: "",
+              sopDocument: "",
+              tags: ["mechanical", "enclosure", "molding"],
+              status: "pending",
+              dependsOn: []
+            },
+            {
+              id: "phase1-task4",
+              title: "Create Bill of Materials (BOM)",
+              description: "Consolidate detailed BOM with part numbers, manufacturers, descriptions, quantities, and cost analysis",
+              timeEstimate: "1 week",
+              scheduleDate: "",
+              completedDate: "",
+              assignee: "",
+              sopDocument: "",
+              tags: ["bom", "costing", "sourcing"],
+              status: "pending",
+              dependsOn: ["phase1-task1", "phase1-task2", "phase1-task3"]
+            },
+            {
+              id: "phase1-task5",
+              title: "DFM/DFA Review",
+              description: "Schedule meeting with experienced hardware engineer or manufacturing consultant",
+              timeEstimate: "1 week",
+              scheduleDate: "",
+              completedDate: "",
+              assignee: "",
+              sopDocument: "",
+              tags: ["review", "consultation"],
+              status: "pending",
+              dependsOn: ["phase1-task4"]
+            }
+          ]
+        },
+        {
+          id: "phase2",
+          title: "Phase 2: Sourcing and Supply Chain Management",
+          description: "Build infrastructure to support production",
+          tasks: [
+            {
+              id: "phase2-task1",
+              title: "Find and Vet Manufacturing Partner",
+              description: "Research Contract Manufacturer (CM) or EMS provider, send RFI/RFQ, conduct site visits/audits",
+              timeEstimate: "2-4 weeks",
+              scheduleDate: "",
+              completedDate: "",
+              assignee: "",
+              sopDocument: "",
+              tags: ["manufacturing", "partner", "audit"],
+              status: "pending",
+              dependsOn: []
+            },
+            {
+              id: "phase2-task2",
+              title: "Develop Supply Chain Strategy",
+              description: "Determine component sourcing approach (turnkey vs consigned), build vendor relationships",
+              timeEstimate: "2-3 weeks",
+              scheduleDate: "",
+              completedDate: "",
+              assignee: "",
+              sopDocument: "",
+              tags: ["supply-chain", "vendors", "sourcing"],
+              status: "pending",
+              dependsOn: ["phase2-task1"]
+            },
+            {
+              id: "phase2-task3",
+              title: "Contract Negotiation",
+              description: "Finalize contract including payment terms, lead times, quality standards, and NRE costs",
+              timeEstimate: "1-2 weeks",
+              scheduleDate: "",
+              completedDate: "",
+              assignee: "",
+              sopDocument: "",
+              tags: ["contracts", "negotiation", "nre"],
+              status: "pending",
+              dependsOn: ["phase2-task2"]
+            }
+          ]
+        },
+        {
+          id: "phase3",
+          title: "Phase 3: Pre-Production and Tooling",
+          description: "Bridge between design and mass production",
+          tasks: [
+            {
+              id: "phase3-task1",
+              title: "Tooling and Fixture Creation",
+              description: "Create solder paste stencils, jigs, fixtures for assembly, and injection molds for enclosures",
+              timeEstimate: "4-8 weeks",
+              scheduleDate: "",
+              completedDate: "",
+              assignee: "",
+              sopDocument: "",
+              tags: ["tooling", "fixtures", "molds"],
+              status: "pending",
+              dependsOn: []
+            },
+            {
+              id: "phase3-task2",
+              title: "Engineering Validation Test (EVT)",
+              description: "Small batch production (10-50 units) to validate manufacturing process",
+              timeEstimate: "1-2 weeks",
+              scheduleDate: "",
+              completedDate: "",
+              assignee: "",
+              sopDocument: "",
+              tags: ["evt", "validation", "testing"],
+              status: "pending",
+              dependsOn: ["phase3-task1"]
+            },
+            {
+              id: "phase3-task3",
+              title: "Design Validation Test (DVT)",
+              description: "Larger batch (50-200 units) to ensure product meets design specifications and reliability requirements",
+              timeEstimate: "2-3 weeks",
+              scheduleDate: "",
+              completedDate: "",
+              assignee: "",
+              sopDocument: "",
+              tags: ["dvt", "reliability", "testing"],
+              status: "pending",
+              dependsOn: ["phase3-task2"]
+            }
+          ]
+        },
+        {
+          id: "phase4",
+          title: "Phase 4: Production and Quality Control",
+          description: "Mass production with comprehensive quality control",
+          tasks: [
+            {
+              id: "phase4-task1",
+              title: "First Article Inspection (FAI)",
+              description: "Rigorous inspection of first production unit to ensure it matches design specifications",
+              timeEstimate: "1 week",
+              scheduleDate: "",
+              completedDate: "",
+              assignee: "",
+              sopDocument: "",
+              tags: ["fai", "inspection", "quality"],
+              status: "pending",
+              dependsOn: []
+            },
+            {
+              id: "phase4-task2",
+              title: "Production Line Optimization",
+              description: "Line balancing and optimization to meet production volume targets",
+              timeEstimate: "1-2 weeks",
+              scheduleDate: "",
+              completedDate: "",
+              assignee: "",
+              sopDocument: "",
+              tags: ["production", "optimization", "volume"],
+              status: "pending",
+              dependsOn: ["phase4-task1"]
+            },
+            {
+              id: "phase4-task3",
+              title: "Quality Control Implementation",
+              description: "Implement ICT, functional testing, EOL testing, sampling and audit procedures",
+              timeEstimate: "2-3 weeks",
+              scheduleDate: "",
+              completedDate: "",
+              assignee: "",
+              sopDocument: "",
+              tags: ["qc", "testing", "procedures"],
+              status: "pending",
+              dependsOn: ["phase4-task2"]
+            }
+          ]
+        }
+      ]
+    };
+
+    // Custom UI Components
+    const Button = ({children, variant = "default", size = "default", className = "", onClick, disabled = false, ...props}) => {
+      const baseClasses = "inline-flex items-center justify-center rounded-md font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring-dark disabled:opacity-50 disabled:pointer-events-none";
+      const variants = {
+        default: "bg-primary-dark text-primary-dark-foreground hover:bg-primary-dark/90",
+        outline: "border border-input-dark hover:bg-accent-dark hover:text-accent-dark-foreground",
+        ghost: "hover:bg-accent-dark hover:text-accent-dark-foreground",
+        destructive: "bg-red-600 text-white hover:bg-red-700"
+      };
+      const sizes = {
+        default: "h-10 py-2 px-4",
+        sm: "h-8 px-3 text-sm",
+        lg: "h-11 px-8",
+        icon: "h-10 w-10"
+      };
+
+      return (
+        <button
+          className={`${baseClasses} ${variants[variant]} ${sizes[size]} ${className}`}
+          onClick={onClick}
+          disabled={disabled}
+          {...props}
+        >
+          {children}
+        </button>
+      );
+    };
+
+    const Card = ({children, className = ""}) => (
+      <div className={`rounded-lg border border-border-dark bg-card-dark text-card-dark-foreground shadow-sm ${className}`}>
+        {children}
+      </div>
+    );
+
+    const CardHeader = ({children, className = ""}) => (
+      <div className={`flex flex-col space-y-1.5 p-4 ${className}`}>
+        {children}
+      </div>
+    );
+
+    const CardContent = ({children, className = ""}) => (
+      <div className={`p-4 pt-0 ${className}`}>
+        {children}
+      </div>
+    );
+
+    const Badge = ({children, variant = "default", className = ""}) => {
+      const variants = {
+        default: "bg-primary-dark text-primary-dark-foreground hover:bg-primary-dark/80",
+        secondary: "bg-secondary-dark text-secondary-dark-foreground hover:bg-secondary-dark/80",
+        outline: "text-foreground-dark border border-input-dark",
+        success: "bg-green-600 text-white",
+        warning: "bg-yellow-600 text-white",
+        danger: "bg-red-600 text-white"
+      };
+      return (
+        <div className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors ${variants[variant]} ${className}`}>
+          {children}
+        </div>
+      );
+    };
+
+    const Input = ({className = "", ...props}) => (
+      <input
+        className={`flex h-10 w-full rounded-md border border-input-dark bg-background-dark px-3 py-2 text-sm ring-offset-background-dark file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-dark-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring-dark disabled:cursor-not-allowed disabled:opacity-50 ${className}`}
+        {...props}
+      />
+    );
+
+    const Textarea = ({className = "", ...props}) => (
+      <textarea
+        className={`flex min-h-[80px] w-full rounded-md border border-input-dark bg-background-dark px-3 py-2 text-sm ring-offset-background-dark placeholder:text-muted-dark-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring-dark disabled:cursor-not-allowed disabled:opacity-50 ${className}`}
+        {...props}
+      />
+    );
+
+    // Simple YAML-to-JSON converter (basic implementation)
+    const simpleYamlToJson = (yamlStr) => {
+      try {
+        // Use js-yaml if available, fallback to simple parser
+        if (typeof jsyaml !== 'undefined') {
+          return jsyaml.load(yamlStr);
+        }
+        // Simple fallback parser for basic YAML
+        return JSON.parse(yamlStr);
+      } catch (e) {
+        throw new Error('Invalid YAML format');
+      }
+    };
+
+    const jsonToYaml = (obj) => {
+      if (typeof jsyaml !== 'undefined') {
+        return jsyaml.dump(obj, {indent: 2});
+      }
+      // Simple fallback - just return JSON
+      return JSON.stringify(obj, null, 2);
+    };
+
+    // Task Detail Panel Component
+    const TaskDetailPanel = ({task, onUpdate, onClose}) => {
+      const [formData, setFormData] = useState(task || {});
+      const [notes, setNotes] = useState('');
+      const [uploadedFiles, setUploadedFiles] = useState([]);
+
+      const storageKey = `task-${task?.id}`;
+
+      useEffect(() => {
+        if (task) {
+          const savedData = localStorage.getItem(storageKey);
+          if (savedData) {
+            const data = JSON.parse(savedData);
+            setNotes(data.notes || '');
+            setUploadedFiles(data.files || []);
+            setFormData({...task, ...data});
+          } else {
+            setFormData(task);
+            setNotes('');
+            setUploadedFiles([]);
+          }
+        }
+      }, [task, storageKey]);
+
+      const handleSave = () => {
+        const data = {
+          ...formData,
+          notes: notes,
+          files: uploadedFiles
+        };
+        localStorage.setItem(storageKey, JSON.stringify(data));
+        if (onUpdate) onUpdate();
+      };
+
+      useEffect(() => {
+        handleSave();
+      }, [formData, notes, uploadedFiles]);
+
+      const handleInputChange = (field, value) => {
+        setFormData(prev => ({...prev, [field]: value}));
+      };
+
+      const handleFileUpload = (event) => {
+        const files = Array.from(event.target.files);
+        const fileNames = files.map(file => file.name);
+        setUploadedFiles(prev => [...prev, ...fileNames]);
+      };
+
+      const removeFile = (index) => {
+        setUploadedFiles(prev => prev.filter((_, i) => i !== index));
+      };
+
+      const getStatusColor = (status) => {
+        switch (status) {
+          case 'completed': return 'success';
+          case 'in-progress': return 'warning';
+          case 'blocked': return 'danger';
+          default: return 'outline';
+        }
+      };
+
+      if (!task) {
+        return (
+          <div className="flex items-center justify-center h-full text-muted-dark-foreground">
+            <div className="text-center">
+              <div className="text-6xl mb-4">📋</div>
+              <p className="text-lg">Select a task to view details</p>
+            </div>
+          </div>
+        );
+      }
+
+      return (
+        <div className="h-full overflow-y-auto">
+          <div className="sticky top-0 bg-background-dark border-b border-border-dark p-4 flex justify-between items-center">
+            <h2 className="text-xl font-bold">{task.title}</h2>
+            <Button variant="ghost" size="icon" onClick={onClose}>
+              ✕
+            </Button>
+          </div>
+
+          <div className="p-6 space-y-6">
+            {/* Status and Basic Info */}
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium mb-2">Status</label>
+                <select
+                  value={formData.status || 'pending'}
+                  onChange={(e) => handleInputChange('status', e.target.value)}
+                  className="w-full h-10 rounded-md border border-input-dark bg-background-dark px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring-dark"
+                >
+                  <option value="pending">Pending</option>
+                  <option value="in-progress">In Progress</option>
+                  <option value="completed">Completed</option>
+                  <option value="blocked">Blocked</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-2">Assignee</label>
+                <Input
+                  value={formData.assignee || ''}
+                  onChange={(e) => handleInputChange('assignee', e.target.value)}
+                  placeholder="Enter assignee name"
+                />
+              </div>
+            </div>
+
+            {/* Dates */}
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium mb-2">Scheduled Date</label>
+                <Input
+                  type="date"
+                  value={formData.scheduleDate || ''}
+                  onChange={(e) => handleInputChange('scheduleDate', e.target.value)}
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-2">Completed Date</label>
+                <Input
+                  type="date"
+                  value={formData.completedDate || ''}
+                  onChange={(e) => handleInputChange('completedDate', e.target.value)}
+                />
+              </div>
+            </div>
+
+            {/* Description and Time Estimate */}
+            <div>
+              <label className="block text-sm font-medium mb-2">Description</label>
+              <p className="text-sm text-muted-dark-foreground p-3 bg-muted-dark rounded-md">
+                {task.description}
+              </p>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium mb-2">Time Estimate</label>
+              <Badge variant="outline">{task.timeEstimate}</Badge>
+            </div>
+
+            {/* SOP Document */}
+            <div>
+              <label className="block text-sm font-medium mb-2">SOP Document URL</label>
+              <Input
+                value={formData.sopDocument || ''}
+                onChange={(e) => handleInputChange('sopDocument', e.target.value)}
+                placeholder="Enter SOP document URL or path"
+              />
+            </div>
+
+            {/* Tags */}
+            <div>
+              <label className="block text-sm font-medium mb-2">Tags</label>
+              <div className="flex flex-wrap gap-1">
+                {task.tags?.map(tag => (
+                  <Badge key={tag} variant="secondary">{tag}</Badge>
+                ))}
+              </div>
+            </div>
+
+            {/* Dependencies */}
+            {task.dependsOn && task.dependsOn.length > 0 && (
+              <div>
+                <label className="block text-sm font-medium mb-2">Dependencies</label>
+                <div className="space-y-1">
+                  {task.dependsOn.map(depId => (
+                    <Badge key={depId} variant="outline" className="mr-1">{depId}</Badge>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Notes */}
+            <div>
+              <label className="block text-sm font-medium mb-2">Notes & Progress</label>
+              <Textarea
+                value={notes}
+                onChange={(e) => setNotes(e.target.value)}
+                placeholder="Add notes about your progress..."
+                rows={6}
+              />
+            </div>
+
+            {/* File Upload */}
+            <div>
+              <label className="block text-sm font-medium mb-2">Documents & Files</label>
+              <input
+                type="file"
+                multiple
+                onChange={handleFileUpload}
+                className="block w-full text-sm text-muted-dark-foreground file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-primary-dark file:text-primary-dark-foreground hover:file:bg-primary-dark/90"
+              />
+              {uploadedFiles.length > 0 && (
+                <div className="mt-4 space-y-2">
+                  <p className="text-sm font-medium">Uploaded Files:</p>
+                  {uploadedFiles.map((fileName, index) => (
+                    <div key={index} className="flex items-center justify-between bg-muted-dark p-2 rounded">
+                      <span className="text-sm truncate">{fileName}</span>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => removeFile(index)}
+                        className="h-6 w-6 p-0 text-red-400 hover:text-red-300"
+                      >
+                        ×
+                      </Button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      );
+    };
+
+    // Left Panel Task Item
+    const TaskItem = ({task, phaseId, isSelected, onClick, onUpdate}) => {
+      const [isCompleted, setIsCompleted] = useState(false);
+      const [status, setStatus] = useState('pending');
+
+      const storageKey = `task-${task.id}`;
+
+      useEffect(() => {
+        const savedData = localStorage.getItem(storageKey);
+        if (savedData) {
+          const data = JSON.parse(savedData);
+          setIsCompleted(data.status === 'completed');
+          setStatus(data.status || 'pending');
+        }
+      }, [storageKey]);
+
+      const handleCheckboxChange = (e) => {
+        e.stopPropagation();
+        const newStatus = e.target.checked ? 'completed' : 'pending';
+        const savedData = localStorage.getItem(storageKey);
+        const data = savedData ? JSON.parse(savedData) : {};
+        data.status = newStatus;
+        if (newStatus === 'completed') {
+          data.completedDate = new Date().toISOString().split('T')[0];
+        } else {
+          data.completedDate = '';
+        }
+        localStorage.setItem(storageKey, JSON.stringify(data));
+        setIsCompleted(e.target.checked);
+        setStatus(newStatus);
+        if (onUpdate) onUpdate();
+      };
+
+      const getStatusIcon = () => {
+        switch (status) {
+          case 'completed': return <span className="text-green-400">✓</span>;
+          case 'in-progress': return <span className="text-yellow-400">⏳</span>;
+          case 'blocked': return <span className="text-red-400">🚫</span>;
+          default: return <span className="text-gray-500">○</span>;
+        }
+      };
+
+      return (
+        <div
+          className={`p-3 rounded-md cursor-pointer transition-colors ${isSelected
+              ? 'bg-accent-dark text-accent-dark-foreground'
+              : 'hover:bg-accent-dark/50'
+            }`}
+          onClick={onClick}
+        >
+          <div className="flex items-start space-x-3">
+            <input
+              type="checkbox"
+              checked={isCompleted}
+              onChange={handleCheckboxChange}
+              className="mt-1 h-4 w-4 rounded border border-input-dark"
+              onClick={(e) => e.stopPropagation()}
+            />
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center space-x-2">
+                {getStatusIcon()}
+                <h4 className="font-medium text-sm leading-tight">{task.title}</h4>
+              </div>
+              <p className="text-xs text-muted-dark-foreground mt-1 line-clamp-2">
+                {task.description}
+              </p>
+              <div className="flex flex-wrap gap-1 mt-2">
+                <Badge variant="outline" className="text-xs px-1 py-0">
+                  {task.timeEstimate}
+                </Badge>
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    };
+
+    // Phase Section in Left Panel
+    const PhaseSection = ({phase, selectedTaskId, onTaskSelect, onUpdate}) => {
+      const [isExpanded, setIsExpanded] = useState(true);
+      const [completedTasks, setCompletedTasks] = useState(0);
+
+      const updateTaskCount = () => {
+        let count = 0;
+        phase.tasks.forEach(task => {
+          const savedData = localStorage.getItem(`task-${task.id}`);
+          if (savedData) {
+            const data = JSON.parse(savedData);
+            if (data.status === 'completed') count++;
+          }
+        });
+        setCompletedTasks(count);
+      };
+
+      useEffect(() => {
+        updateTaskCount();
+      }, [phase.tasks]);
+
+      const isPhaseCompleted = completedTasks === phase.tasks.length;
+      const progressPercentage = Math.round((completedTasks / phase.tasks.length) * 100);
+
+      return (
+        <div className="mb-4">
+          <Button
+            variant="ghost"
+            onClick={() => setIsExpanded(!isExpanded)}
+            className="w-full justify-between p-3 h-auto text-left hover:bg-accent-dark/50"
+          >
+            <div className="flex items-center space-x-3">
+              <div className={`text-lg ${isPhaseCompleted ? 'text-green-400' : 'text-gray-500'}`}>
+                {isPhaseCompleted ? '✓' : '○'}
+              </div>
+              <div className="flex-1 min-w-0">
+                <h3 className="font-semibold text-sm leading-tight">{phase.title}</h3>
+                <div className="flex items-center space-x-2 mt-1">
+                  <div className="text-xs text-muted-dark-foreground">
+                    {completedTasks}/{phase.tasks.length}
+                  </div>
+                  <div className="flex-1 bg-gray-700 rounded-full h-1 max-w-20">
+                    <div
+                      className="bg-green-500 h-1 rounded-full transition-all duration-300"
+                      style={{width: `${progressPercentage}%`}}
+                    ></div>
+                  </div>
+                  <span className="text-xs font-medium">{progressPercentage}%</span>
+                </div>
+              </div>
+            </div>
+            <div className={`transform transition-transform text-muted-dark-foreground ${isExpanded ? 'rotate-180' : ''}`}>
+              ↓
+            </div>
+          </Button>
+          {isExpanded && (
+            <div className="ml-4 mt-2 space-y-1 border-l border-border-dark pl-4">
+              {phase.tasks.map(task => (
+                <TaskItem
+                  key={task.id}
+                  task={task}
+                  phaseId={phase.id}
+                  isSelected={selectedTaskId === task.id}
+                  onClick={() => onTaskSelect(task)}
+                  onUpdate={() => {
+                    updateTaskCount();
+                    onUpdate();
+                  }}
+                />
+              ))}
+            </div>
+          )}
+        </div>
+      );
+    };
+
+    // Import/Export Modal
+    const ImportExportModal = ({isOpen, onClose, onImport, masterPlan}) => {
+      const [activeTab, setActiveTab] = useState('export');
+      const [importData, setImportData] = useState('');
+      const [importError, setImportError] = useState('');
+      const fileInputRef = useRef();
+
+      const handleExportYAML = () => {
+        try {
+          const yamlStr = jsonToYaml(masterPlan);
+          const blob = new Blob([yamlStr], {type: 'text/yaml'});
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = 'manufacturing-plan.yaml';
+          a.click();
+          URL.revokeObjectURL(url);
+        } catch (error) {
+          console.error('Export error:', error);
+        }
+      };
+
+      const handleExportJSON = () => {
+        try {
+          const jsonStr = JSON.stringify(masterPlan, null, 2);
+          const blob = new Blob([jsonStr], {type: 'application/json'});
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = 'manufacturing-plan.json';
+          a.click();
+          URL.revokeObjectURL(url);
+        } catch (error) {
+          console.error('Export error:', error);
+        }
+      };
+
+      const handleImport = () => {
+        try {
+          setImportError('');
+          let parsed;
+
+          // Try to parse as YAML first, then JSON
+          try {
+            parsed = simpleYamlToJson(importData);
+          } catch (e) {
+            try {
+              parsed = JSON.parse(importData);
+            } catch (e2) {
+              throw new Error('Invalid YAML or JSON format');
+            }
+          }
+
+          // Validate the structure
+          if (!parsed.title || !parsed.phases || !Array.isArray(parsed.phases)) {
+            throw new Error('Invalid manufacturing plan structure');
+          }
+
+          onImport(parsed);
+          setImportData('');
+          onClose();
+        } catch (error) {
+          setImportError(error.message);
+        }
+      };
+
+      const handleFileUpload = (event) => {
+        const file = event.target.files[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            setImportData(e.target.result);
+          };
+          reader.readAsText(file);
+        }
+      };
+
+      if (!isOpen) return null;
+
+      return (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-card-dark border border-border-dark rounded-lg shadow-lg w-full max-w-2xl max-h-[80vh] overflow-hidden">
+            <div className="flex justify-between items-center p-6 border-b border-border-dark">
+              <h2 className="text-xl font-bold">Import/Export Manufacturing Plan</h2>
+              <Button variant="ghost" size="icon" onClick={onClose}>✕</Button>
+            </div>
+
+            <div className="p-6">
+              <div className="flex space-x-4 mb-6">
+                <Button
+                  variant={activeTab === 'export' ? 'default' : 'outline'}
+                  onClick={() => setActiveTab('export')}
+                >
+                  Export
+                </Button>
+                <Button
+                  variant={activeTab === 'import' ? 'default' : 'outline'}
+                  onClick={() => setActiveTab('import')}
+                >
+                  Import
+                </Button>
+              </div>
+
+              {activeTab === 'export' && (
+                <div className="space-y-4">
+                  <p className="text-sm text-muted-dark-foreground">
+                    Export your current manufacturing plan including all progress data.
+                  </p>
+                  <div className="flex space-x-4">
+                    <Button onClick={handleExportYAML} className="flex-1">
+                      Export as YAML
+                    </Button>
+                    <Button onClick={handleExportJSON} variant="outline" className="flex-1">
+                      Export as JSON
+                    </Button>
+                  </div>
+                </div>
+              )}
+
+              {activeTab === 'import' && (
+                <div className="space-y-4">
+                  <p className="text-sm text-muted-dark-foreground">
+                    Import a new manufacturing plan from YAML or JSON format.
+                  </p>
+
+                  <div>
+                    <label className="block text-sm font-medium mb-2">Upload File</label>
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      accept=".yaml,.yml,.json"
+                      onChange={handleFileUpload}
+                      className="block w-full text-sm text-muted-dark-foreground file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-primary-dark file:text-primary-dark-foreground hover:file:bg-primary-dark/90"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium mb-2">Or Paste Content</label>
+                    <Textarea
+                      value={importData}
+                      onChange={(e) => setImportData(e.target.value)}
+                      placeholder="Paste your YAML or JSON content here..."
+                      rows={10}
+                      className="font-mono text-xs"
+                    />
+                  </div>
+
+                  {importError && (
+                    <div className="text-red-400 text-sm p-3 bg-red-950/20 rounded-md">
+                      {importError}
+                    </div>
+                  )}
+
+                  <div className="flex justify-end space-x-2">
+                    <Button variant="outline" onClick={onClose}>
+                      Cancel
+                    </Button>
+                    <Button
+                      onClick={handleImport}
+                      disabled={!importData.trim()}
+                    >
+                      Import Plan
+                    </Button>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      );
+    };
+
+    // Main App Component
+    const ManufacturingChecklist = () => {
+      const [masterPlan, setMasterPlan] = useState(defaultMasterPlan);
+      const [selectedTask, setSelectedTask] = useState(null);
+      const [totalProgress, setTotalProgress] = useState(0);
+      const [showImportExport, setShowImportExport] = useState(false);
+
+      const calculateTotalProgress = () => {
+        let totalTasks = 0;
+        let completedTasks = 0;
+
+        masterPlan.phases.forEach(phase => {
+          totalTasks += phase.tasks.length;
+          phase.tasks.forEach(task => {
+            const savedData = localStorage.getItem(`task-${task.id}`);
+            if (savedData) {
+              const data = JSON.parse(savedData);
+              if (data.status === 'completed') completedTasks++;
+            }
+          });
+        });
+
+        setTotalProgress(totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0);
+      };
+
+      useEffect(() => {
+        calculateTotalProgress();
+      }, [masterPlan]);
+
+      useEffect(() => {
+        // Load saved master plan from localStorage
+        const savedPlan = localStorage.getItem('manufacturing-plan');
+        if (savedPlan) {
+          try {
+            const parsed = JSON.parse(savedPlan);
+            setMasterPlan(parsed);
+          } catch (e) {
+            console.error('Failed to load saved plan:', e);
+          }
+        }
+      }, []);
+
+      const handleImportPlan = (newPlan) => {
+        // Clear existing task data
+        masterPlan.phases.forEach(phase => {
+          phase.tasks.forEach(task => {
+            localStorage.removeItem(`task-${task.id}`);
+          });
+        });
+
+        setMasterPlan(newPlan);
+        localStorage.setItem('manufacturing-plan', JSON.stringify(newPlan));
+        setSelectedTask(null);
+        calculateTotalProgress();
+      };
+
+      const handleTaskUpdate = () => {
+        calculateTotalProgress();
+      };
+
+      const exportProgress = () => {
+        const progressData = {};
+        masterPlan.phases.forEach(phase => {
+          phase.tasks.forEach(task => {
+            const savedData = localStorage.getItem(`task-${task.id}`);
+            if (savedData) {
+              progressData[task.id] = JSON.parse(savedData);
+            }
+          });
+        });
+
+        const exportData = {
+          ...masterPlan,
+          progressData
+        };
+
+        const blob = new Blob([JSON.stringify(exportData, null, 2)], {type: 'application/json'});
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'manufacturing-progress-complete.json';
+        a.click();
+        URL.revokeObjectURL(url);
+      };
+
+      return (
+        <div className="flex h-screen bg-background-dark text-foreground-dark">
+          {/* Left Panel */}
+          <div className="w-1/3 border-r border-border-dark flex flex-col">
+            {/* Header */}
+            <div className="p-6 border-b border-border-dark">
+              <h1 className="text-2xl font-bold mb-2">{masterPlan.title}</h1>
+              <div className="flex items-center space-x-3 mb-4">
+                <div className="flex-1 bg-gray-700 rounded-full h-2">
+                  <div
+                    className="bg-green-500 h-2 rounded-full transition-all duration-500"
+                    style={{width: `${totalProgress}%`}}
+                  ></div>
+                </div>
+                <span className="text-sm font-bold">{totalProgress}%</span>
+              </div>
+              <div className="flex space-x-2">
+                <Button
+                  onClick={() => setShowImportExport(true)}
+                  variant="outline"
+                  size="sm"
+                  className="flex-1"
+                >
+                  Import/Export
+                </Button>
+                <Button
+                  onClick={exportProgress}
+                  variant="outline"
+                  size="sm"
+                  className="flex-1"
+                >
+                  Export Progress
+                </Button>
+              </div>
+            </div>
+
+            {/* Phases List */}
+            <div className="flex-1 overflow-y-auto p-4">
+              {masterPlan.phases.map(phase => (
+                <PhaseSection
+                  key={phase.id}
+                  phase={phase}
+                  selectedTaskId={selectedTask?.id}
+                  onTaskSelect={setSelectedTask}
+                  onUpdate={calculateTotalProgress}
+                />
+              ))}
+            </div>
+          </div>
+
+          {/* Right Panel - Task Details */}
+          <div className="flex-1 flex flex-col">
+            <div className="border-b border-border-dark p-4 bg-card-dark">
+              <h2 className="text-lg font-semibold">
+                {selectedTask ? 'Task Details' : 'Manufacturing Plan Overview'}
+              </h2>
+            </div>
+            <div className="flex-1">
+              <TaskDetailPanel
+                task={selectedTask}
+                onUpdate={handleTaskUpdate}
+                onClose={() => setSelectedTask(null)}
+              />
+            </div>
+          </div>
+
+          {/* Import/Export Modal */}
+          <ImportExportModal
+            isOpen={showImportExport}
+            onClose={() => setShowImportExport(false)}
+            onImport={handleImportPlan}
+            masterPlan={masterPlan}
+          />
+        </div>
+      );
+    };
+
+    // Render the app
+    ReactDOM.render(<ManufacturingChecklist />, document.getElementById('root'));
+  </script>
+</body>
+
+</html>
