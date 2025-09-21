@@ -73,7 +73,7 @@ const PhaseSection = ({ phase, selectedTaskId, onTaskSelect, onUpdate, onAddTask
               <div
                 ref={provided.innerRef}
                 {...provided.droppableProps}
-                className={`space-y-1 ${snapshot.isDraggingOver ? 'bg-gray-800/50 rounded-md p-2' : ''}`}
+                className={`space-y-2 ${snapshot.isDraggingOver ? 'bg-gray-800/50 rounded-md p-2' : ''}`}
               >
                 {phase.tasks.map((task, index) => (
                   <Draggable key={task.id} draggableId={task.id} index={index}>

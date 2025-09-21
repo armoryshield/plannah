@@ -4,14 +4,15 @@ import { Button } from './components/ui';
 import { TaskDetailPanel, PhaseSection, ImportExportModal } from './components/features';
 import TaskEditModal from './components/features/TaskEditModal';
 import PhaseEditModal from './components/features/PhaseEditModal';
+import { TaskStorageProvider } from './contexts/TaskStorageContext';
 import { useLocalStorage, useTaskProgress, useImportExport } from './hooks';
 import { defaultMasterPlan } from './data/defaultMasterPlan';
 import './App.css';
 
 /**
- * Main Manufacturing Checklist Application
+ * Inner App Component (with storage context)
  */
-function App() {
+function AppContent() {
   const [masterPlan, setMasterPlan] = useLocalStorage('manufacturing-plan', defaultMasterPlan);
   const [selectedTask, setSelectedTask] = useState(null);
   const [showImportExport, setShowImportExport] = useState(false);
@@ -21,32 +22,32 @@ function App() {
   const [editingPhase, setEditingPhase] = useState(null);
   const [addingTaskToPhase, setAddingTaskToPhase] = useState(null);
   const { totalProgress, calculateTotalProgress } = useTaskProgress(masterPlan);
-  const { exportProgress } = useImportExport(masterPlan);
+  const { exportProgress, importPlan } = useImportExport(masterPlan);
 
-  const handleImportPlan = (newPlan) => {
-    // Clear existing task data
-    if (masterPlan && masterPlan.phases) {
-      masterPlan.phases.forEach(phase => {
-        phase.tasks.forEach(task => {
-          localStorage.removeItem(`task-${task.id}`);
-        });
-      });
+  const handleImportPlan = async (newPlan) => {
+    try {
+      // The importPlan function now handles clearing task data with new storage system
+      const imported = await importPlan(newPlan);
+
+      setMasterPlan(imported);
+      setSelectedTask(null);
+      calculateTotalProgress();
+    } catch (error) {
+      console.error('Import plan error:', error);
+      // Could add user notification here
     }
-
-    setMasterPlan(newPlan);
-    setSelectedTask(null);
-    calculateTotalProgress();
   };
 
   const handleTaskUpdate = () => {
     calculateTotalProgress();
   };
 
-  const handleExportProgress = () => {
+  const handleExportProgress = async () => {
     try {
-      exportProgress();
+      await exportProgress();
     } catch (error) {
       console.error('Export progress error:', error);
+      // Could add user notification here
     }
   };
 
@@ -183,7 +184,7 @@ function App() {
                 size="sm"
                 className="flex-1"
               >
-                Import/Export
+                Plan Settings
               </Button>
               <Button
                 onClick={handleExportProgress}
@@ -266,6 +267,17 @@ function App() {
         />
       </div>
     </DragDropContext>
+  );
+}
+
+/**
+ * Main App Component with Storage Provider
+ */
+function App() {
+  return (
+    <TaskStorageProvider>
+      <AppContent />
+    </TaskStorageProvider>
   );
 }
 
