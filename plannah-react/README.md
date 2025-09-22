@@ -1,8 +1,8 @@
-# Plannah - Manufacturing Master Plan Checklist
+# Surge Master Plan
 
-A comprehensive React application for managing electronic product manufacturing workflows from prototype to mass production.
+A comprehensive React application for managing electronic product manufacturing workflows from prototype to mass production, powered by Surge.
 
-![Plannah Screenshot](https://via.placeholder.com/800x400/1f2937/ffffff?text=Plannah+Manufacturing+Checklist)
+![Surge Master Plan Screenshot](https://via.placeholder.com/800x400/1f2937/ffffff?text=Surge+Master+Plan)
 
 ## 🚀 Features
 

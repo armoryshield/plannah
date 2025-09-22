@@ -17,6 +17,7 @@ const TaskDetailPanel = ({ task, onUpdate, onClose }) => {
     status: 'pending',
     assignee: '',
     scheduleDate: '',
+    scheduleEndDate: '',
     completedDate: '',
     sopDocument: ''
   });
@@ -39,6 +40,7 @@ const TaskDetailPanel = ({ task, onUpdate, onClose }) => {
           status: 'pending',
           assignee: '',
           scheduleDate: '',
+          scheduleEndDate: '',
           completedDate: '',
           sopDocument: ''
         });
@@ -67,6 +69,7 @@ const TaskDetailPanel = ({ task, onUpdate, onClose }) => {
             status: savedState.status || task.status || 'pending',
             assignee: savedState.assignee || task.assignee || '',
             scheduleDate: savedState.scheduleDate || task.scheduleDate || '',
+            scheduleEndDate: savedState.scheduleEndDate || task.scheduleEndDate || '',
             completedDate: savedState.completedDate || task.completedDate || '',
             sopDocument: savedState.sopDocument || task.sopDocument || ''
           });
@@ -79,6 +82,7 @@ const TaskDetailPanel = ({ task, onUpdate, onClose }) => {
             status: task.status || 'pending',
             assignee: task.assignee || '',
             scheduleDate: task.scheduleDate || '',
+            scheduleEndDate: task.scheduleEndDate || '',
             completedDate: task.completedDate || '',
             sopDocument: task.sopDocument || ''
           });
@@ -224,55 +228,6 @@ const TaskDetailPanel = ({ task, onUpdate, onClose }) => {
       </div>
 
       <div className="p-6 space-y-6">
-        {/* Status and Basic Info */}
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm font-medium mb-2">Status</label>
-            <select
-              value={formData.status || 'pending'}
-              onChange={(e) => handleInputChange('status', e.target.value)}
-              onBlur={handleInputBlur}
-              className="w-full h-10 rounded-md border border-gray-600 bg-gray-800 text-white px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
-            >
-              <option value="pending">Pending</option>
-              <option value="in-progress">In Progress</option>
-              <option value="completed">Completed</option>
-              <option value="blocked">Blocked</option>
-            </select>
-          </div>
-          <div>
-            <label className="block text-sm font-medium mb-2">Assignee</label>
-            <Input
-              value={formData.assignee || ''}
-              onChange={(e) => handleInputChange('assignee', e.target.value)}
-              onBlur={handleInputBlur}
-              placeholder="Enter assignee name"
-            />
-          </div>
-        </div>
-
-        {/* Dates */}
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm font-medium mb-2">Scheduled Date</label>
-            <Input
-              type="date"
-              value={formData.scheduleDate || ''}
-              onChange={(e) => handleInputChange('scheduleDate', e.target.value)}
-              onBlur={handleInputBlur}
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium mb-2">Completed Date</label>
-            <Input
-              type="date"
-              value={formData.completedDate || ''}
-              onChange={(e) => handleInputChange('completedDate', e.target.value)}
-              onBlur={handleInputBlur}
-            />
-          </div>
-        </div>
-
         {/* Description and Time Estimate */}
         <div>
           <label className="block text-sm font-medium mb-2">Description</label>
@@ -285,7 +240,6 @@ const TaskDetailPanel = ({ task, onUpdate, onClose }) => {
           <label className="block text-sm font-medium mb-2">Time Estimate</label>
           <Badge variant="outline">{task.timeEstimate}</Badge>
         </div>
-
         {/* SOP Document */}
         <div>
           <label className="block text-sm font-medium mb-2">SOP Document URL</label>
@@ -318,6 +272,70 @@ const TaskDetailPanel = ({ task, onUpdate, onClose }) => {
             </div>
           </div>
         )}
+
+        {/* Status and Basic Info */}
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium mb-2">Status</label>
+            <select
+              value={formData.status || 'pending'}
+              onChange={(e) => handleInputChange('status', e.target.value)}
+              onBlur={handleInputBlur}
+              className="w-full h-10 rounded-md border border-gray-600 bg-gray-800 text-white px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+            >
+              <option value="pending">Pending</option>
+              <option value="in-progress">In Progress</option>
+              <option value="completed">Completed</option>
+              <option value="blocked">Blocked</option>
+            </select>
+          </div>
+          <div>
+            <label className="block text-sm font-medium mb-2">Assignee</label>
+            <Input
+              value={formData.assignee || ''}
+              onChange={(e) => handleInputChange('assignee', e.target.value)}
+              onBlur={handleInputBlur}
+              placeholder="Enter assignee name"
+            />
+          </div>
+        </div>
+
+        {/* Dates */}
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium mb-2">Scheduled Start Date</label>
+            <Input
+              type="date"
+              value={formData.scheduleDate || ''}
+              onChange={(e) => handleInputChange('scheduleDate', e.target.value)}
+              onBlur={handleInputBlur}
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium mb-2">Scheduled End Date</label>
+            <Input
+              type="date"
+              value={formData.scheduleEndDate || ''}
+              onChange={(e) => handleInputChange('scheduleEndDate', e.target.value)}
+              onBlur={handleInputBlur}
+            />
+          </div>
+        </div>
+
+        {/* Completion Date */}
+        <div className="grid grid-cols-1 gap-4">
+          <div>
+            <label className="block text-sm font-medium mb-2">Completed Date</label>
+            <Input
+              type="date"
+              value={formData.completedDate || ''}
+              onChange={(e) => handleInputChange('completedDate', e.target.value)}
+              onBlur={handleInputBlur}
+            />
+          </div>
+        </div>
+
+
 
         {/* Notes */}
         <div>
@@ -397,7 +415,7 @@ const TaskDetailPanel = ({ task, onUpdate, onClose }) => {
           </div>
         </div>
       </div>
-    </div>
+    </div >
   );
 };
 

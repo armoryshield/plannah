@@ -10,8 +10,9 @@ import { useTaskStorage } from '../../contexts/TaskStorageContext';
  * @param {function} props.onClick - Click handler
  * @param {function} props.onUpdate - Update callback
  * @param {function} props.onEdit - Edit task callback
+ * @param {boolean} props.isPlanLocked - Whether the plan is locked
  */
-const TaskItem = ({ task, phaseId, isSelected, onClick, onUpdate, onEdit }) => {
+const TaskItem = ({ task, phaseId, isSelected, onClick, onUpdate, onEdit, isPlanLocked }) => {
   const storage = useTaskStorage();
   const [taskState, setTaskState] = useState({
     status: 'pending',
@@ -47,6 +48,8 @@ const TaskItem = ({ task, phaseId, isSelected, onClick, onUpdate, onEdit }) => {
 
   const handleCheckboxChange = async (e) => {
     e.stopPropagation();
+    if (isPlanLocked) return; // Prevent changes when locked
+
     const newStatus = e.target.checked ? 'completed' : 'pending';
 
     try {
@@ -131,8 +134,14 @@ const TaskItem = ({ task, phaseId, isSelected, onClick, onUpdate, onEdit }) => {
             type="checkbox"
             checked={taskState.isCompleted}
             onChange={handleCheckboxChange}
-            className="mt-0.5 h-3.5 w-3.5 rounded border border-gray-500 bg-gray-800 text-blue-600 focus:ring-blue-500 focus:ring-offset-0 focus:ring-1"
+            disabled={isPlanLocked}
+            className={`mt-0.5 h-3.5 w-3.5 rounded border text-blue-600 focus:ring-blue-500 focus:ring-offset-0 focus:ring-1 ${
+              isPlanLocked
+                ? 'border-gray-600 bg-gray-800 cursor-not-allowed opacity-50'
+                : 'border-gray-500 bg-gray-800 cursor-pointer'
+            }`}
             onClick={(e) => e.stopPropagation()}
+            title={isPlanLocked ? 'Plan is locked' : 'Toggle task completion'}
           />
 
           <div className="flex-1 min-w-0 space-y-1">
@@ -141,7 +150,7 @@ const TaskItem = ({ task, phaseId, isSelected, onClick, onUpdate, onEdit }) => {
               <h4 className="font-medium text-sm leading-snug text-gray-100 truncate">
                 {task.title}
               </h4>
-              {onEdit && (
+              {onEdit && !isPlanLocked && (
                 <button
                   onClick={(e) => {
                     e.stopPropagation();

@@ -1,6 +1,6 @@
 // Default Manufacturing Master Plan Data Structure
 export const defaultMasterPlan = {
-  title: "Electronic Product Manufacturing Master Plan",
+  title: "Surge Master Plan",
   phases: [
     {
       id: "phase1",
